@@ -17,10 +17,14 @@ utf_materials = r'utf_materials'
 uni_materials = r'uni_materials'
 pre_materials = r'pre_materials'
 txt = r'960101.TXT'
+pre_txt = r'precess_word.TXT'
+mid_forw_txt = r'mid_forw.txt'
+mid_back_txt = r'mid_back.txt'
+
 lexicon_txt = 'lexicon.txt'
 
 
-fp = codecs.open(os.path.join(path,pre_materials,txt),"r",'utf-16')
+fp = codecs.open(os.path.join(path,pre_materials,pre_txt),"r",'utf-16')
 content = fp.readlines()
 fp.close()
 fp = codecs.open(os.path.join(path,lexicon_txt),"r",'utf-16')
@@ -37,10 +41,12 @@ word = word_cnt.keys()
 
 tw = '脑出血'.decode('utf-8')
 
-word_cnt_forw,word_cnt_forw_mis = kmatch.kmatch_forward(content,word_cnt)
-word_cnt_back,word_cnt_back_mis = kmatch.kmatch_backward(content,word_cnt)
+word_cnt_forw,word_cnt_forw_mis = \
+    kmatch.kmatch_forward(content,word_cnt,os.path.join(path,pre_materials,mid_forw_txt))
+word_cnt_back,word_cnt_back_mis = \
+    kmatch.kmatch_backward(content,word_cnt,os.path.join(path,pre_materials,mid_back_txt))
 #print type(word_cnt_forw)
-word_sort_forw = sorted(word_cnt_forw.iteritems(), key=lambda d:d[1], reverse = True)
-
-word_sort_back = sorted(word_cnt_back.iteritems(), key=lambda d:d[1], reverse = True)
+#word_sort_forw = sorted(word_cnt_forw.iteritems(), key=lambda d:d[1], reverse = True)
+#
+#word_sort_back = sorted(word_cnt_back.iteritems(), key=lambda d:d[1], reverse = True)
 
