@@ -10,6 +10,7 @@ import kmatch
 import kgene
 import cPickle as pickle
 import kheap
+#import kpymap
 path = r'G:\workspace\nlp\materials'
 raw_materials = r'raw_materials'
 utf_materials = r'utf_materials'
@@ -23,6 +24,7 @@ mid_back_txt = r'mid_back.txt'
 
 lexicon_txt = 'lexicon.txt'
 kheap_size = 100
+kscope_max = 1000*1000
 f1 = file('temp.pkl', 'rb')
 uni_cnt=pickle.load(f1)
 bin_cnt=pickle.load(f1)
@@ -31,79 +33,49 @@ id_bin_cnt=pickle.load(f1)
 word_id=pickle.load(f1)
 pin2cha=pickle.load(f1)
 pin2word=pickle.load(f1)
-#uni_cnt=pickle.load(f1)
 f1.close()
 
-def kpinysolution(pinys,pins):
-    sol = []
-    #print pins
-    l = len(pinys)
-    if l > 5:
-        l = 5
-    for i in range(l):
-        #print pinys[0:i+1],pinys[i+1:]
-        if pins.has_key(pinys[0:i+1]):
-            if len(pinys[i+1:])==0:
-                sol.append([pinys[0:i+1]])
-            else:
-                t = kpinysolution(pinys[i+1:],pins)
-                #print p,len(t)#,t
-                
-                if len(t)!= 0 :
-                    for k in t:
-                        sol.append([pinys[0:i+1]]+k)            
-        #for p in pins:
-#            if pinys[0:i+1]== p:
-#                if len(pinys[i+1:])==0:
-#                    sol.append([p])
-#                else:
-#                    t = kpinysolution(pinys[i+1:],pins)
-#                    #print p,len(t)#,t
-#                    
-#                    if len(t)!= 0 :
-#                        for k in t:
-#                            sol.append([p]+k)
-    #print sol
-    return sol
         
-
-#word_cnt,word_id,pin2cha,pin2word  = kwordpre.kwordpre(os.path.join(path,lexicon_txt))
+print "start."
 
 letters = 'wo ai bei jing tian an men'
-letters = 'yi zhi mei li de xiao hua'
-letters = 'ji qi xue xi ji qi ying yong ji qi le ren men ji qi nong hou de xing qu'
-#pins = 'jiang ze min'
+#letters = 'yi zhi mei li de xiao hua'
+#letters = 'ji qi xue xi ji qi ying yong '#ji qi le ren men ji qi nong hou de xing qu'
+#letters += 'ji qi le ren men '#ji qi nong hou de xing qu'
+#letters += 'ji qi nong hou de xing qu'
+#letters = 'ji'
 letters = letters.replace("\n","").replace("\r","").replace(" ","")
 
-piny_solutions = kpinysolution(letters,pin2word)
+piny_solutions = kgene.kpinysolution(letters,pin2word)
 #print h
 
-piny_sol = kmatch.kmatch_grid(letters,pin2word)
-print piny_sol
-#char_list = []
-#cnt = 0
-#for pin_sol in pin_solutions:
-#    chars = []
-#    for pin in pin_sol:
-#        chars.append(pin2word[pin])
-#        """
-#        for i in pin2word[pin]:
+#piny_sol = kmatch.kmatch_grid(letters,pin2word)
+#print piny_sol
+word_solutions = []
+ws_num = 0
+
+for piny_sol in piny_solutions:
+    scope = 1
+    print piny_sol
+    word_map = []
+    for yin in piny_sol:
+        scope *=len(pin2word[yin])
+        word_map.append(pin2word[yin])
+#        for i in pin2word[yin]:
 #            print i,#id_uni_cnt[word_id[i]]
 #        print ""
-#        """
-#    cnt +=len(kgene.kgene(chars))
-#    print cnt
-#    #char_list += kgene.kgene(chars)
-#print cnt
-word_map = []
-for yin in piny_sol:
-    word_map.append(pin2word[yin])
-    for i in pin2word[yin]:
-        print i,#id_uni_cnt[word_id[i]]
-    print ""
-word_solutions = kgene.kgene(word_map)
-#print char_list
+    print scope ,
+    if scope > kscope_max:
+        print "X"
+        continue
+    else:
+        print ""
 
+    word_solutions += kgene.kgene(word_map)
+#word_solutions = 
+word_solutions.reverse()
+#print len(word_solutions)
+#
 min_value = 0
 score_list =[]
 #obj = []
